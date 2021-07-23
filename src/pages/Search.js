@@ -1,34 +1,75 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { search, update } from '../BooksAPI';
+import BookShelf from '../components/BookShelf';
 
-// import * as BooksAPI from './BooksAPI'
-
-const Search = () => {
-  const handleClick = () => {
-    window.history.back();
+class Search extends React.Component {
+  state = {
+    data: [],
+    query: '',
   };
-  return (
-    <div className='search-books'>
-      <div className='search-books-bar'>
-        <button className='close-search' onClick={handleClick}>
-          Close
-        </button>
-        <div className='search-books-input-wrapper'>
-          {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
 
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-          <input type='text' placeholder='Search by title or author' />
+  handleSearch(query) {
+    if (query.length > 1) {
+      search(query)
+        .then((response) => this.setState({ data: response }))
+        .catch((error) => console.log(error, 'error'));
+    } else {
+      this.setState({ data: [] });
+    }
+  }
+
+  handleBack() {
+    window.history.back();
+  }
+
+  handleChange = (e) => {
+    const value = e.target.value.split(' ');
+    console.log(value, 'e');
+    const shelf = value[0];
+    const id = value[1];
+
+    update(id, shelf)
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error, 'error'));
+  };
+
+  render() {
+    const { data } = this.state;
+
+    return (
+      <div className='search-books'>
+        <div className='search-books-bar'>
+          <Link to='/'>
+            <button className='close-search'>Close</button>
+          </Link>
+          <div className='search-books-input-wrapper'>
+            <input
+              type='text'
+              placeholder='Search by title or author'
+              onChange={(e) => this.handleSearch(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className='search-books-results'>
+          <ol className='books-grid'>
+            {data.map(({ authors, imageLinks, title, id }) => (
+              <li key={id}>
+                <BookShelf
+                  bookTitle={title}
+                  bookAuthor={authors}
+                  backgroundImage={imageLinks.smallThumbnail}
+                  onChange={this.handleChange}
+                  id={id}
+                  // defaultValue={`- ${id}`}
+                />
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
-      <div className='search-books-results'>
-        <ol className='books-grid' />
-      </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default Search;
