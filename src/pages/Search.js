@@ -12,7 +12,14 @@ class Search extends React.Component {
   handleSearch(query) {
     if (query.length > 1) {
       search(query)
-        .then((response) => this.setState({ data: response }))
+        .then((response) => {
+          console.log(response, 'reså');
+          if (response.error === 'empty query') {
+            this.setState({ data: [] });
+          } else {
+            this.setState({ data: response });
+          }
+        })
         .catch((error) => console.log(error, 'error'));
     } else {
       this.setState({ data: [] });
@@ -25,7 +32,7 @@ class Search extends React.Component {
 
   handleChange = (e) => {
     const value = e.target.value.split(' ');
-    console.log(value, 'e');
+
     const shelf = value[0];
     const id = value[1];
 
@@ -61,7 +68,7 @@ class Search extends React.Component {
                   backgroundImage={imageLinks.smallThumbnail}
                   onChange={this.handleChange}
                   id={id}
-                  // defaultValue={`- ${id}`}
+                  defaultValue={`${id}`}
                 />
               </li>
             ))}
