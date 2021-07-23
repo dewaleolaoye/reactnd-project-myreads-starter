@@ -1,6 +1,13 @@
 import React from 'react';
 
-const BookShelf = ({ backgroundImage, onChange, bookTitle, bookAuthor }) => {
+const BookShelf = ({
+  backgroundImage,
+  onChange,
+  bookTitle,
+  bookAuthor,
+  id,
+  defaultValue,
+}) => {
   return (
     <div className='book'>
       <div className='book-top'>
@@ -13,13 +20,13 @@ const BookShelf = ({ backgroundImage, onChange, bookTitle, bookAuthor }) => {
           }}
         />
         <div className='book-shelf-changer'>
-          <select onChange={onChange}>
+          <select onChange={onChange} value={defaultValue}>
             <option value='move' disabled>
               Move to...
             </option>
-            <option value='currentlyReading'>Currently Reading</option>
-            <option value='wantToRead'>Want to Read</option>
-            <option value='read'>Read</option>
+            <option value={`currentlyReading ${id}`}>Currently Reading</option>
+            <option value={`wantToRead ${id}`}>Want to Read</option>
+            <option value={`read ${id}`}>Read</option>
             <option value='none'>None</option>
           </select>
         </div>

@@ -5,28 +5,29 @@ import Read from '../components/Read';
 import WantToRead from '../components/WantToRead';
 import * as BooksAPI from '../BooksAPI';
 
-// const Home = () => {
-//   BooksAPI.getAll()
-//     .then((res) => console.log(res, 'res'))
-//     .catch((err) => console.log(err, 'error'));
-//   return (
-
-//   );
-// };
-
 class Home extends React.Component {
   state = {
     data: [],
   };
 
-  componentDidMount() {
+  getBooks() {
     BooksAPI.getAll()
       .then((response) => this.setState({ data: response }))
       .catch((error) => console.log(error, 'error'));
   }
 
+  componentDidMount() {
+    this.getBooks();
+  }
+
   handleChange = (e) => {
-    console.log(e.target.value, 'HOME');
+    const value = e.target.value.split(' ');
+    const shelf = value[0];
+    const id = value[1];
+
+    BooksAPI.update(id, shelf)
+      .then(() => this.getBooks())
+      .catch((error) => console.log(error, 'error'));
   };
   render() {
     return (
@@ -40,9 +41,9 @@ class Home extends React.Component {
             handleChange={this.handleChange}
           />
 
-          <WantToRead data={this.state.data} />
+          <WantToRead data={this.state.data} handleChange={this.handleChange} />
 
-          <Read data={this.state.data} />
+          <Read data={this.state.data} handleChange={this.handleChange} />
         </div>
         <div className='open-search'>
           <Link to='/search'>

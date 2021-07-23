@@ -11,13 +11,15 @@ const Read = ({ data, handleChange }) => {
       <h2 className='bookshelf-title'>Read</h2>
       <div className='bookshelf-books'>
         <ol className='books-grid'>
-          {filterData.map(({ authors, imageLinks, title }) => (
-            <li key={title}>
+          {filterData.map(({ authors, imageLinks, title, id }) => (
+            <li key={id}>
               <BookShelf
                 bookTitle={title}
                 bookAuthor={authors.map((res) => res.toString())}
                 backgroundImage={imageLinks.smallThumbnail}
                 onChange={handleChange}
+                id={id}
+                defaultValue={`read ${id}`}
               />
             </li>
           ))}
