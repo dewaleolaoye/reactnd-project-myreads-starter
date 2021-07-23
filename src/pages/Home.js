@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import CurrentlyReading from '../components/CurrentlyReading';
 import Read from '../components/Read';
 import WantToRead from '../components/WantToRead';
-import * as BooksAPI from '../BooksAPI';
+import { getAll, update } from '../BooksAPI';
 
 class Home extends React.Component {
   state = {
@@ -11,7 +11,7 @@ class Home extends React.Component {
   };
 
   getBooks() {
-    BooksAPI.getAll()
+    getAll()
       .then((response) => this.setState({ data: response }))
       .catch((error) => console.log(error, 'error'));
   }
@@ -25,7 +25,7 @@ class Home extends React.Component {
     const shelf = value[0];
     const id = value[1];
 
-    BooksAPI.update(id, shelf)
+    update(id, shelf)
       .then(() => this.getBooks())
       .catch((error) => console.log(error, 'error'));
   };

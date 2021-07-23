@@ -6,8 +6,6 @@ const CurrentlyReading = ({ data, handleChange }) => {
     return shelf === 'currentlyReading';
   });
 
-  console.log(filterData, 'filter data');
-
   return (
     <div className='bookshelf'>
       <h2 className='bookshelf-title'>Currently Reading</h2>
