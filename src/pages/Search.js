@@ -1,36 +1,49 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { search, update } from '../BooksAPI';
+import debounce from 'lodash.debounce';
+import { getAll, search, update } from '../BooksAPI';
 import BookShelf from '../components/BookShelf';
 
-class Search extends React.Component {
-  state = {
-    data: [],
-    query: '',
-  };
+const Search = () => {
+  const [state, setState] = useState({ data: [] });
+  const [shelfData, setShelfData] = useState({ data: [] });
 
-  handleSearch(query) {
-    if (query.length > 1) {
+  const handleSearch = (e) => {
+    const query = e.target.value;
+
+    if (query.length >= 1) {
       search(query)
         .then((response) => {
-          console.log(response, 'reså');
           if (response.error === 'empty query') {
-            this.setState({ data: [] });
+            setState({ data: [] });
           } else {
-            this.setState({ data: response });
+            setState({ data: response });
           }
         })
         .catch((error) => console.log(error, 'error'));
     } else {
-      this.setState({ data: [] });
+      setState({ data: [] });
     }
-  }
+  };
 
-  handleBack() {
-    window.history.back();
-  }
+  useEffect(() => {
+    getAll()
+      .then((response) =>
+        setShelfData({
+          data: response,
+        })
+      )
 
-  handleChange = (e) => {
+      .catch((error) => console.log(error, 'error'));
+  }, []);
+
+  const mergedBooks = state.data.map((shelf) => {
+    const item = shelfData.data.find(({ id }) => id === shelf.id);
+
+    return item ? item : shelf;
+  });
+
+  const handleChange = (e) => {
     const value = e.target.value.split(' ');
 
     const shelf = value[0];
@@ -41,42 +54,44 @@ class Search extends React.Component {
       .catch((error) => console.log(error, 'error'));
   };
 
-  render() {
-    const { data } = this.state;
+  const debouncedChangeHandler = useMemo(() => {
+    return debounce(handleSearch, 400);
+  }, []);
 
-    return (
-      <div className='search-books'>
-        <div className='search-books-bar'>
-          <Link to='/'>
-            <button className='close-search'>Close</button>
-          </Link>
-          <div className='search-books-input-wrapper'>
-            <input
-              type='text'
-              placeholder='Search by title or author'
-              onChange={(e) => this.handleSearch(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className='search-books-results'>
-          <ol className='books-grid'>
-            {data.map(({ authors, imageLinks, title, id }) => (
-              <li key={id}>
-                <BookShelf
-                  bookTitle={title}
-                  bookAuthor={authors}
-                  backgroundImage={imageLinks.smallThumbnail}
-                  onChange={this.handleChange}
-                  id={id}
-                  defaultValue={`${id}`}
-                />
-              </li>
-            ))}
-          </ol>
+  return (
+    <div className='search-books'>
+      <div className='search-books-bar'>
+        <Link to='/'>
+          <button className='close-search'>Close</button>
+        </Link>
+        <div className='search-books-input-wrapper'>
+          <input
+            type='text'
+            placeholder='Search by title or author'
+            onChange={debouncedChangeHandler}
+          />
         </div>
       </div>
-    );
-  }
-}
+      <div className='search-books-results'>
+        <ol className='books-grid'>
+          {mergedBooks.map(({ authors, imageLinks, title, id, shelf }) => (
+            <li key={id}>
+              <BookShelf
+                bookTitle={title}
+                bookAuthor={authors === undefined ? '' : authors}
+                backgroundImage={
+                  imageLinks === undefined ? '' : imageLinks.smallThumbnail
+                }
+                onChange={handleChange}
+                id={id}
+                defaultValue={`${shelf} ${id}`}
+              />
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+};
 
 export default Search;

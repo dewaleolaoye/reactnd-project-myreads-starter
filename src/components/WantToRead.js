@@ -11,7 +11,7 @@ const WantToRead = ({ data, handleChange }) => {
       <h2 className='bookshelf-title'>Want to Read</h2>
       <div className='bookshelf-books'>
         <ol className='books-grid'>
-          {filterData.map(({ authors, imageLinks, title, id }) => (
+          {filterData.map(({ authors, imageLinks, title, id, shelf }) => (
             <li key={id}>
               <BookShelf
                 bookTitle={title}

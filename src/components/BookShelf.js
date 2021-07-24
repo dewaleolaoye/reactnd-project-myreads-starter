@@ -18,7 +18,7 @@ const BookShelf = ({
             style={{
               width: 128,
               height: 193,
-              backgroundImage: `url(${backgroundImage})`,
+              backgroundImage: `url(${backgroundImage ? backgroundImage : ''})`,
             }}
           />
         </Link>
@@ -30,7 +30,7 @@ const BookShelf = ({
             <option value={`currentlyReading ${id}`}>Currently Reading</option>
             <option value={`wantToRead ${id}`}>Want to Read</option>
             <option value={`read ${id}`}>Read</option>
-            <option value='none'>None</option>
+            <option value={`none ${id}`}>None</option>
           </select>
         </div>
       </div>
