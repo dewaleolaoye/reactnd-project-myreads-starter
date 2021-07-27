@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import { getAll, search, update } from '../BooksAPI';
 import BookShelf from '../components/BookShelf';
 
 const Search = () => {
+  const history = useHistory();
   const [state, setState] = useState({ data: [] });
   const [shelfData, setShelfData] = useState({ data: [] });
 
@@ -50,7 +51,7 @@ const Search = () => {
     const id = value[1];
 
     update(id, shelf)
-      .then((response) => console.log(response))
+      .then(() => history.push('/'))
       .catch((error) => console.log(error, 'error'));
   };
 
@@ -85,6 +86,7 @@ const Search = () => {
                 onChange={handleChange}
                 id={id}
                 defaultValue={`${shelf} ${id}`}
+                shelf={`${shelf}`}
               />
             </li>
           ))}

@@ -7,6 +7,7 @@ const BookShelf = ({
   bookTitle,
   bookAuthor,
   id,
+  shelf,
   defaultValue,
 }) => {
   return (
