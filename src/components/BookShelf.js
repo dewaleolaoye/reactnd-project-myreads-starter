@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 const BookShelf = ({ book, onChange, shelfCategory }) => {
   const { title, authors, id, imageLinks, shelf } = book;
@@ -38,6 +39,11 @@ const BookShelf = ({ book, onChange, shelfCategory }) => {
       <div className='book-authors'>{authors}</div>
     </div>
   );
+};
+
+BookShelf.propTypes = {
+  book: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default BookShelf;
