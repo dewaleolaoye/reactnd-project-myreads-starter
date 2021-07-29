@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const BookShelf = ({ book, onChange, shelfCategory }) => {
-  // console.log(shelfCategory, 'shelf category');
-  const { title, authors, id, imageLinks } = book;
+  const { title, authors, id, imageLinks, shelf } = book;
+
   return (
     <div className='book'>
       <div className='book-top'>
@@ -22,7 +22,7 @@ const BookShelf = ({ book, onChange, shelfCategory }) => {
         <div className='book-shelf-changer'>
           <select
             onChange={(e) => onChange(book, e.target.value)}
-            value={shelfCategory}
+            value={shelf ? shelfCategory : 'none'}
           >
             <option value='move' disabled>
               Move to...

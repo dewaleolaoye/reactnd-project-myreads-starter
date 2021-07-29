@@ -44,11 +44,13 @@ const Search = () => {
   }, [state]);
 
   const handleChange = (book, shelf) => {
-    update(book.id, shelf)
-      .then((res) => {
-        console.log(res, 'RESPONSE');
-      })
-      .catch((error) => console.log(error, 'error'));
+    book.shelf = shelf;
+
+    update(book.id, shelf).then(() => {
+      setShelfData({
+        data: shelfData.data,
+      });
+    });
   };
 
   const debouncedChangeHandler = useMemo(() => {
@@ -73,7 +75,11 @@ const Search = () => {
         <ol className='books-grid'>
           {mergedBooks.map((book) => (
             <li key={book.id}>
-              <BookShelf book={book} onChange={handleChange} />
+              <BookShelf
+                shelfCategory={book.shelf}
+                book={book}
+                onChange={handleChange}
+              />
             </li>
           ))}
         </ol>
