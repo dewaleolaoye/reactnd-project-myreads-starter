@@ -1,11 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import { getAll, search, update } from '../BooksAPI';
 import BookShelf from '../components/BookShelf';
 
 const Search = () => {
-  const history = useHistory();
   const [state, setState] = useState({ data: [] });
   const [shelfData, setShelfData] = useState({ data: [] });
 
@@ -27,6 +26,12 @@ const Search = () => {
     }
   };
 
+  const mergedBooks = state.data.map((shelf) => {
+    const item = shelfData.data.find(({ id }) => id === shelf.id);
+
+    return item ? item : shelf;
+  });
+
   useEffect(() => {
     getAll()
       .then((response) =>
@@ -36,22 +41,13 @@ const Search = () => {
       )
 
       .catch((error) => console.log(error, 'error'));
-  }, []);
+  }, [state]);
 
-  const mergedBooks = state.data.map((shelf) => {
-    const item = shelfData.data.find(({ id }) => id === shelf.id);
-
-    return item ? item : shelf;
-  });
-
-  const handleChange = (e) => {
-    const value = e.target.value.split(' ');
-
-    const shelf = value[0];
-    const id = value[1];
-
-    update(id, shelf)
-      .then(() => history.push('/'))
+  const handleChange = (book, shelf) => {
+    update(book.id, shelf)
+      .then((res) => {
+        console.log(res, 'RESPONSE');
+      })
       .catch((error) => console.log(error, 'error'));
   };
 
@@ -75,19 +71,9 @@ const Search = () => {
       </div>
       <div className='search-books-results'>
         <ol className='books-grid'>
-          {mergedBooks.map(({ authors, imageLinks, title, id, shelf }) => (
-            <li key={id}>
-              <BookShelf
-                bookTitle={title}
-                bookAuthor={authors === undefined ? '' : authors}
-                backgroundImage={
-                  imageLinks === undefined ? '' : imageLinks.smallThumbnail
-                }
-                onChange={handleChange}
-                id={id}
-                defaultValue={`${shelf} ${id}`}
-                shelf={`${shelf}`}
-              />
+          {mergedBooks.map((book) => (
+            <li key={book.id}>
+              <BookShelf book={book} onChange={handleChange} />
             </li>
           ))}
         </ol>

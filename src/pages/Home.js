@@ -8,27 +8,29 @@ class Home extends React.Component {
     data: [],
   };
 
-  getBooks() {
-    getAll()
-      .then((response) => this.setState({ data: response }))
-      .catch((error) => console.log(error, 'error'));
+  async componentDidMount() {
+    try {
+      const response = await getAll();
+
+      this.setState({ data: response });
+    } catch (error) {
+      console.log(error, 'error');
+    }
   }
 
-  componentDidMount() {
-    this.getBooks();
-  }
+  handleChange = (selectedBook, shelf) => {
+    selectedBook.shelf = shelf;
 
-  handleChange = (e) => {
-    // console.log(id, 'UPDATE BOOKS');
-    const value = e.target.value.split(' ');
-    const shelf = value[0];
-    const id = value[1];
-
-    update(id, shelf)
-      .then(() => {
-        this.getBooks();
-      })
-      .catch((error) => console.log(error, 'error'));
+    update(selectedBook.id, shelf).then(() => {
+      this.setState((currentState) => ({
+        data: currentState.data
+          .filter((b) => {
+            console.log(currentState, 'current state');
+            return b.id !== selectedBook.id;
+          })
+          .concat([selectedBook]),
+      }));
+    });
   };
 
   render() {
@@ -38,7 +40,26 @@ class Home extends React.Component {
           <h1>MyReads</h1>
         </div>
         <div className='list-books-content'>
-          <Shelf data={this.state.data} handleChange={this.handleChange} />
+          <Shelf
+            data={this.state.data}
+            handleChange={this.handleChange}
+            title={'Currently Reading'}
+            shelfCategory={'currentlyReading'}
+          />
+
+          <Shelf
+            data={this.state.data}
+            handleChange={this.handleChange}
+            title={'Want To Read'}
+            shelfCategory={'wantToRead'}
+          />
+
+          <Shelf
+            data={this.state.data}
+            handleChange={this.handleChange}
+            title={'Read'}
+            shelfCategory={'read'}
+          />
         </div>
         <div className='open-search'>
           <Link to='/search'>

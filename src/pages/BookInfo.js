@@ -17,16 +17,11 @@ class BookInfo extends React.Component {
   componentDidMount() {
     const pathId = window.location.pathname.split('/');
 
-    // this.setState({ id: pathId[2] });
     this.getBook(pathId[2]);
   }
 
-  handleChange = (e) => {
-    const value = e.target.value.split(' ');
-    const shelf = value[0];
-    const id = value[1];
-
-    update(id, shelf)
+  handleChange = (book, shelf) => {
+    update(book.id, shelf)
       .then(() => this.getBooks())
       .catch((error) => console.log(error, 'error'));
   };
@@ -34,18 +29,13 @@ class BookInfo extends React.Component {
   render() {
     const { data } = this.state;
 
-    const thumbnail = data.imageLinks && data.imageLinks.smallThumbnail;
-
     return (
       <>
         <div className='book-info'>
           <BookShelf
-            id={data.id}
-            backgroundImage={thumbnail}
-            bookAuthor={data.authors}
-            bookTitle={data.title}
+            book={data}
             onChange={this.handleChange}
-            key={data.id}
+            shelfCategory={data.shelf}
           />
 
           <div className='book-content'>
